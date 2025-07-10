@@ -1,5 +1,6 @@
 import { Delius_Swash_Caps, Sen } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 const delius = Delius_Swash_Caps({
   weight: "400",
@@ -21,9 +22,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${delius.variable} ${sen.variable} bg-gray-900 text-white`}
-      >
+      <body className={`${delius.variable} ${sen.variable} `}>
+        <Navbar />
         {children}
       </body>
     </html>
