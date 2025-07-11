@@ -1,9 +1,53 @@
-import { Play, Plus, Star, Calendar, Clock } from "lucide-react";
+"use client";
+import AnimeCard from "@/components/AnimeCard";
+import FeatureCard from "@/components/FeatureCard";
+import {
+  getPopularAnime,
+  getSpecialForYou,
+  getTrendingAnime,
+} from "@/lib/jikanApi";
+import { Play, Plus, Star, Calendar, Clock, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function page() {
+  const [specialForYouAnime, setSpecialForYouAnime] = useState([]);
+  const [trendingAnime, setTrendingAnime] = useState([]);
+  const [popularAnime, setPopularAnime] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSpecialForYou = async () => {
+      try {
+        setLoading(true);
+        const specialForYou = await getSpecialForYou(6);
+        const trendingAnime = await getTrendingAnime(6);
+        const popularAnime = await getPopularAnime(18);
+        console.log("specialForYou", specialForYou);
+        console.log("trendingAnime", trendingAnime);
+        console.log("popularAnime", popularAnime);
+        setSpecialForYouAnime(specialForYou);
+        setTrendingAnime(trendingAnime);
+        setPopularAnime(popularAnime);
+        setError(null);
+      } catch (err) {
+        console.error("Failed to fetch anime:", err);
+        setError("Failed to load anime");
+        setSpecialForYouAnime([]); // Ensure it's always an array
+        setTrendingAnime([]);
+        setPopularAnime([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSpecialForYou();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white font-sen">
       {/* Hero Section */}
       <div className="h-screen bg-gradient-to-r from-black via-black/50 to-transparent">
         <div className="absolute inset-0 bg-cover bg-center">
@@ -52,6 +96,129 @@ export default function page() {
                 Add to List
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Special For You Section */}
+      <div className="bg-black/10 py-8 sm:py-12">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold  text-white">
+              Special For You
+            </h2>
+
+            <button className=" text-white text-xs md:text-lg transition-colors flex items-center gap-1 hover:text-rose-600 cursor-pointer">
+              <span>View All</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
+            {loading ? (
+              <p className="text-white">Loading...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : specialForYouAnime.length > 0 ? (
+              specialForYouAnime.map((anime, index) => (
+                <AnimeCard key={`${anime.mal_id}-${index}`} anime={anime} />
+              ))
+            ) : (
+              <p className="text-gray-400">No anime found</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Feature Section */}
+      <div className="bg-black/10 py-8 sm:py-12">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+            Featured Collections
+          </h2>
+
+          <div className="flex flex-col md:flex-row gap-8 justify-center items-center md:items-stretch">
+            <FeatureCard
+              title="The Best Mystical Anime"
+              images={[
+                "/jujutsu_kaisen.jpg",
+                "/jujutsu_kaisen.jpg",
+                "/jujutsu_kaisen.jpg",
+              ]}
+            />
+            <FeatureCard
+              title="The Best Action Anime"
+              images={[
+                "/chainsaw_man_poster.jpg",
+                "/chainsaw_man_poster.jpg",
+                "/chainsaw_man_poster.jpg",
+              ]}
+            />
+            <FeatureCard
+              title="The Best Comedy Anime"
+              images={[
+                "/chainsaw_man_poster.jpg",
+                "/chainsaw_man_poster.jpg",
+                "/chainsaw_man_poster.jpg",
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Trending Section */}
+      <div className="py-8 sm:py-12">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold  text-white">
+              Trending Now
+            </h2>
+
+            <button className=" text-white text-xs md:text-lg transition-colors flex items-center gap-1 hover:text-rose-600 cursor-pointer">
+              <span>View All</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
+            {loading ? (
+              <p className="text-white">Loading...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : trendingAnime.length > 0 ? (
+              trendingAnime.map((anime, index) => (
+                <AnimeCard key={`${anime.mal_id}-${index}`} anime={anime} />
+              ))
+            ) : (
+              <p className="text-gray-400">No anime found</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Popular Section */}
+      <div className="py-8 sm:py-12">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold  text-white">
+              Popular Now
+            </h2>
+
+            <button className=" text-white text-xs md:text-lg transition-colors flex items-center gap-1 hover:text-rose-600 cursor-pointer">
+              <span>View All</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 md:gap-6">
+            {loading ? (
+              <p className="text-white">Loading...</p>
+            ) : error ? (
+              <p className="text-red-500">{error}</p>
+            ) : popularAnime.length > 0 ? (
+              popularAnime.map((anime, index) => (
+                <AnimeCard key={`${anime.mal_id}-${index}`} anime={anime} />
+              ))
+            ) : (
+              <p className="text-gray-400">No anime found</p>
+            )}
           </div>
         </div>
       </div>
