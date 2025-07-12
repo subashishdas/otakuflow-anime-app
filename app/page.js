@@ -10,8 +10,11 @@ import { Play, Plus, Star, Calendar, Clock, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function page() {
+  const pathname = usePathname();
+
   const [specialForYouAnime, setSpecialForYouAnime] = useState([]);
   const [trendingAnime, setTrendingAnime] = useState([]);
   const [popularAnime, setPopularAnime] = useState([]);
@@ -19,23 +22,36 @@ export default function page() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchSpecialForYou = async () => {
+    // Only fetch data when we're on the home page
+    if (pathname !== "/") return;
+
+    const fetchAllAnime = async () => {
       try {
         setLoading(true);
+        setError(null);
+
+        // Add delays between API calls to respect rate limits
         const specialForYou = await getSpecialForYou(6);
+
+        // Wait 1 second before next call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const trendingAnime = await getTrendingAnime(6);
+
+        // Wait 1 second before next call
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const popularAnime = await getPopularAnime(18);
+
         console.log("specialForYou", specialForYou);
         console.log("trendingAnime", trendingAnime);
         console.log("popularAnime", popularAnime);
+
         setSpecialForYouAnime(specialForYou);
         setTrendingAnime(trendingAnime);
         setPopularAnime(popularAnime);
-        setError(null);
       } catch (err) {
         console.error("Failed to fetch anime:", err);
         setError("Failed to load anime");
-        setSpecialForYouAnime([]); // Ensure it's always an array
+        setSpecialForYouAnime([]);
         setTrendingAnime([]);
         setPopularAnime([]);
       } finally {
@@ -43,8 +59,8 @@ export default function page() {
       }
     };
 
-    fetchSpecialForYou();
-  }, []);
+    fetchAllAnime();
+  }, [pathname]);
 
   return (
     <div className="min-h-screen bg-black text-white font-sen">

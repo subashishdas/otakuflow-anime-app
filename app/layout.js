@@ -22,7 +22,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${delius.variable} ${sen.variable} `}>
+      <body
+        className={`${delius.variable} ${sen.variable} bg-black/90 text-white `}
+      >
         <Navbar />
         {children}
       </body>
