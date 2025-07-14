@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${delius.variable} ${sen.variable} bg-black/90 text-white `}
+        className={`${delius.variable} ${sen.variable} bg-[#111111] text-white `}
       >
         <Navbar />
         {children}

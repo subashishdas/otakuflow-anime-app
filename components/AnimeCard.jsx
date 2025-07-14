@@ -4,11 +4,8 @@ import { Play } from "lucide-react";
 const AnimeCard = ({ anime }) => {
   const imageUrl =
     anime?.images?.jpg?.image_url || anime?.images?.jpg?.large_image_url;
-  const title = anime?.title || anime?.title_english || "Unknown Title";
-  const year =
-    anime?.year || anime?.aired?.from
-      ? new Date(anime.aired.from).getFullYear()
-      : "N/A";
+  const title = anime?.title_english || anime?.title || "Unknown Title";
+  const year = anime?.year || "N/A";
   const score = anime?.score || "N/A";
   const genres =
     anime?.genres
@@ -20,7 +17,15 @@ const AnimeCard = ({ anime }) => {
     <div className="rounded-lg overflow-hidden group hover:scale-105 transition-transform duration-300 cursor-pointer">
       {/* Image container with text overlay */}
       <div className="relative h-48 sm:h-56 md:h-64">
-        <Image src={imageUrl} alt={title} fill className="object-cover" />
+        {imageUrl && (
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        )}
 
         {/* Play button overlay */}
         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:bg-black/50 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">

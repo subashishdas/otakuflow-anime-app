@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { getAnimeList } from "@/lib/jikanApi";
 import AnimeCard from "@/components/AnimeCard";
 import Sidebar from "@/components/Sidebar";
+import Link from "next/link";
 
 const AnimePage = () => {
   const searchParams = useSearchParams();
@@ -293,10 +294,12 @@ const AnimePage = () => {
             <>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-8">
                 {animeList.map((anime, index) => (
-                  <AnimeCard
-                    key={`${anime.mal_id}-${currentPage}-${index}`}
-                    anime={anime}
-                  />
+                  <Link href={`/anime/${anime.mal_id}`} key={index}>
+                    <AnimeCard
+                      key={`${anime.mal_id}-${currentPage}-${index}`}
+                      anime={anime}
+                    />
+                  </Link>
                 ))}
               </div>
 
